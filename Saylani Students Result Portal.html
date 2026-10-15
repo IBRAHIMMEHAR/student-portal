@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Saylani Students Result Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eaf1ee; --surface:#fafcfb; --ink:#14261f; --muted:#5d7068; --line:#d3dfd9;
+  --accent:#0f6b3f; --accent-ink:#ffffff; --accent-soft:#d6ece0;
+  --good:#0f6b3f; --warn:#a8650b; --bad:#b83a2b; --bad-bg:#f6d9d3; --warn-bg:#f7e6c4;
+  --display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif;
+  --body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1714; --surface:#17211d; --ink:#e6f0eb; --muted:#97aba2; --line:#27352f;
+    --accent:#5fd39b; --accent-ink:#06210f; --accent-soft:#17382a;
+    --good:#5fd39b; --warn:#f0b95a; --bad:#f08a7c; --bad-bg:#431d18; --warn-bg:#40300f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1714; --surface:#17211d; --ink:#e6f0eb; --muted:#97aba2; --line:#27352f;
+  --accent:#5fd39b; --accent-ink:#06210f; --accent-soft:#17382a;
+  --good:#5fd39b; --warn:#f0b95a; --bad:#f08a7c; --bad-bg:#431d18; --warn-bg:#40300f;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;}
+.wrap{max-width:820px;margin:0 auto;padding:20px 16px 80px;}
+h1,h2{font-family:var(--display);margin:0;letter-spacing:-0.01em;}
+h1{font-size:clamp(28px,6vw,40px);line-height:1.1;font-weight:700;}
+h2{font-size:20px;font-weight:700;margin-bottom:6px;}
+.sub{color:var(--muted);margin:6px 0 0;}
+button{font:inherit;color:inherit;cursor:pointer;}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px;}
+
+.tabs{display:flex;gap:6px;margin:22px 0 16px;border-bottom:1px solid var(--line);overflow-x:auto;}
+.tab{background:none;border:0;padding:10px 14px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);}
+
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-weight:600;}
+.btn:hover{border-color:var(--accent);}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+.btn.danger{color:var(--bad);}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.spacer{flex:1;}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;}
+.empty{text-align:center;padding:28px 16px;color:var(--muted);}
+.empty h2{color:var(--ink);font-size:22px;}
+input[type=text],input[type=number],select,textarea{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);}
+textarea{width:100%;min-height:110px;resize:vertical;}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:4px;}
+
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:520px;}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:15px;}
+th{font-weight:600;color:var(--muted);font-size:13px;}
+td.num,th.num{font-variant-numeric:tabular-nums;}
+.rank{font-family:var(--display);font-weight:700;font-size:18px;width:44px;}
+.rank.top{color:var(--accent);}
+.grade{display:inline-block;min-width:34px;text-align:center;padding:2px 9px;border-radius:999px;font-weight:700;font-size:13px;background:var(--accent-soft);color:var(--good);}
+.grade.mid{background:var(--warn-bg);color:var(--warn);}
+.grade.low{background:var(--bad-bg);color:var(--bad);}
+.pbar{height:6px;border-radius:3px;background:var(--line);margin-top:5px;overflow:hidden;min-width:70px;}
+.pbar i{display:block;height:100%;background:var(--accent);}
+
+.stats{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:14px;}
+.stats div b{font-family:var(--display);font-size:26px;font-weight:700;margin-right:4px;}
+.stats div span{color:var(--muted);font-size:14px;}
+
+.mrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);}
+.mrow .nm{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere;}
+.mrow .rl{color:var(--muted);font-size:13px;font-weight:400;display:block;}
+.mrow input{width:90px;text-align:right;}
+.mrow .of{color:var(--muted);font-size:14px;width:56px;}
+.form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.form-row > div{flex:1;min-width:140px;}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);}
+.item small{color:var(--muted);}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.toast.show{opacity:1;}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Saylani Students Result Portal</h1>
+  <p class="sub">Marks, percentages and class ranking</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-res" aria-selected="true" data-tab="res">Results</button>
+    <button class="tab" role="tab" id="t-mrk" aria-selected="false" data-tab="mrk">Enter marks</button>
+    <button class="tab" role="tab" id="t-set" aria-selected="false" data-tab="set">Students &amp; tests</button>
+  </div>
+
+  <section id="v-res"></section>
+  <section id="v-mrk" hidden></section>
+  <section id="v-set" hidden></section>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  var KEY='saylani-result-portal-v1';
+  var state={students:[],tests:[],marks:{}};
+  var curTest=null;
+
+  function load(){
+    try{
+      var raw=localStorage.getItem(KEY);
+      if(raw){var s=JSON.parse(raw);if(s&&Array.isArray(s.students)&&Array.isArray(s.tests)&&s.marks)state=s;}
+    }catch(e){}
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+  function uid(){return 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+  function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function $(id){return document.getElementById(id);}
+  function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show');},1800);}
+  function gradeOf(p){
+    if(p>=80)return ['A+',''];if(p>=70)return ['A',''];if(p>=60)return ['B','mid'];
+    if(p>=50)return ['C','mid'];if(p>=40)return ['D','low'];return ['F','low'];
+  }
+  function round1(n){return Math.round(n*10)/10;}
+
+  function computeResults(){
+    var rows=state.students.map(function(s){
+      var got=0,max=0,n=0;
+      state.tests.forEach(function(t){
+        var v=(state.marks[t.id]||{})[s.id];
+        if(typeof v==='number'){got+=v;max+=t.total;n++;}
+      });
+      return {id:s.id,name:s.name,roll:s.roll,got:got,max:max,n:n,pct:max?got/max*100:null};
+    });
+    rows.sort(function(a,b){
+      if(a.pct===null&&b.pct===null)return a.name.localeCompare(b.name);
+      if(a.pct===null)return 1;if(b.pct===null)return -1;
+      return b.pct-a.pct||a.name.localeCompare(b.name);
+    });
+    var rank=0,prev=null,pos=0;
+    rows.forEach(function(r){
+      if(r.pct===null){r.rank=null;return;}
+      pos++;
+      if(prev===null||round1(r.pct)!==prev){rank=pos;prev=round1(r.pct);}
+      r.rank=rank;
+    });
+    return rows;
+  }
+
+  /* ---------- Results ---------- */
+  function renderRes(){
+    var el=$('v-res');
+    var rows=computeResults();
+    var scored=rows.filter(function(r){return r.pct!==null;});
+    if(!state.students.length||!state.tests.length||!scored.length){
+      var msg=!state.students.length?'Add your students and tests first, then enter marks. Results appear here automatically.':
+              !state.tests.length?'Add at least one test, then enter marks.':'Enter marks for a test and the results will show up here.';
+      el.innerHTML='<div class="panel empty"><h2>No results yet</h2><p>'+msg+'</p><button class="btn primary" id="goSet">'+(!state.students.length||!state.tests.length?'Add students &amp; tests':'Enter marks')+'</button></div>';
+      $('goSet').onclick=function(){setTab(!state.students.length||!state.tests.length?'set':'mrk');};
+      return;
+    }
+    var avg=scored.reduce(function(a,r){return a+r.pct;},0)/scored.length;
+    var pass=scored.filter(function(r){return r.pct>=40;}).length;
+    var html='<div class="stats">'+
+      '<div><b>'+scored.length+'</b><span>students with marks</span></div>'+
+      '<div><b>'+round1(avg)+'%</b><span>class average</span></div>'+
+      '<div><b>'+round1(scored[0].pct)+'%</b><span>top score</span></div>'+
+      '<div><b>'+pass+'/'+scored.length+'</b><span>passing (40%+)</span></div></div>';
+    html+='<div class="bar"><span class="sub" style="margin:0">Percentage covers only the tests each student has marks for. Grades: A+ 80, A 70, B 60, C 50, D 40.</span><span class="spacer"></span><button class="btn" id="copyRes">Copy results</button></div>';
+    html+='<div class="panel"><div class="table-scroll"><table><thead><tr><th>Rank</th><th>Student</th><th class="num">Marks</th><th class="num">Percentage</th><th>Grade</th></tr></thead><tbody>';
+    rows.forEach(function(r){
+      if(r.pct===null){
+        html+='<tr><td class="rank">-</td><td>'+esc(r.name)+(r.roll?'<br><small style="color:var(--muted)">'+esc(r.roll)+'</small>':'')+'</td><td class="num">-</td><td class="num">-</td><td>-</td></tr>';
+        return;
+      }
+      var g=gradeOf(r.pct);
+      html+='<tr><td class="rank'+(r.rank<=3?' top':'')+'">'+r.rank+'</td>'+
+        '<td>'+esc(r.name)+(r.roll?'<br><small style="color:var(--muted)">'+esc(r.roll)+'</small>':'')+'</td>'+
+        '<td class="num">'+round1(r.got)+' / '+r.max+'</td>'+
+        '<td class="num">'+round1(r.pct)+'%<div class="pbar"><i style="width:'+Math.min(100,r.pct)+'%"></i></div></td>'+
+        '<td><span class="grade '+g[1]+'">'+g[0]+'</span></td></tr>';
+    });
+    html+='</tbody></table></div></div>';
+    el.innerHTML=html;
+    $('copyRes').onclick=function(){copyResults(rows);};
+  }
+  function copyResults(rows){
+    var txt='Saylani Students Result Portal\n\n';
+    rows.forEach(function(r){
+      if(r.pct===null)return;
+      txt+=r.rank+'. '+r.name+' - '+round1(r.got)+'/'+r.max+' ('+round1(r.pct)+'%, '+gradeOf(r.pct)[0]+')\n';
+    });
+    function fb(){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');toast('Results copied');}catch(e){toast('Could not copy');}document.body.removeChild(ta);}
+    try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('Results copied');},fb);}else fb();}catch(e){fb();}
+  }
+
+  /* ---------- Marks entry ---------- */
+  function renderMrk(){
+    var el=$('v-mrk');
+    if(!state.students.length||!state.tests.length){
+      el.innerHTML='<div class="panel empty"><h2>Nothing to mark yet</h2><p>Add students and at least one test first.</p><button class="btn primary" id="goSet2">Add students &amp; tests</button></div>';
+      $('goSet2').onclick=function(){setTab('set');};return;
+    }
+    if(!curTest||!state.tests.some(function(t){return t.id===curTest;}))curTest=state.tests[0].id;
+    var test=state.tests.filter(function(t){return t.id===curTest;})[0];
+    var students=state.students.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+    var html='<div class="bar"><div><label for="testSel">Test</label><select id="testSel">';
+    state.tests.forEach(function(t){html+='<option value="'+t.id+'"'+(t.id===curTest?' selected':'')+'>'+esc(t.title)+' (out of '+t.total+')</option>';});
+    html+='</select></div><span class="spacer"></span><span class="sub" id="entered" style="margin:0"></span></div>';
+    html+='<div class="panel">';
+    students.forEach(function(s){
+      var v=(state.marks[test.id]||{})[s.id];
+      html+='<div class="mrow"><div class="nm">'+esc(s.name)+(s.roll?'<span class="rl">'+esc(s.roll)+'</span>':'')+'</div>'+
+        '<input type="number" inputmode="decimal" min="0" max="'+test.total+'" step="any" data-id="'+s.id+'" aria-label="Marks for '+esc(s.name)+'" value="'+(typeof v==='number'?v:'')+'">'+
+        '<span class="of">/ '+test.total+'</span></div>';
+    });
+    html+='</div>';
+    el.innerHTML=html;
+    $('testSel').onchange=function(e){curTest=e.target.value;renderMrk();};
+    function updEntered(){
+      var m=state.marks[test.id]||{};var vals=students.filter(function(s){return typeof m[s.id]==='number';}).map(function(s){return m[s.id];});
+      var a=vals.length?round1(vals.reduce(function(x,y){return x+y;},0)/vals.length):0;
+      $('entered').textContent=vals.length+' of '+students.length+' entered'+(vals.length?' - average '+a+' / '+test.total:'');
+    }
+    updEntered();
+    el.querySelectorAll('.mrow input').forEach(function(inp){
+      inp.oninput=function(){
+        var id=inp.getAttribute('data-id');
+        var m=state.marks[test.id]=state.marks[test.id]||{};
+        if(inp.value===''){delete m[id];}
+        else{
+          var n=parseFloat(inp.value);
+          if(isNaN(n)||n<0||n>test.total){inp.style.borderColor='var(--bad)';return;}
+          inp.style.borderColor='';m[id]=n;
+        }
+        save();updEntered();
+      };
+    });
+  }
+
+  /* ---------- Setup ---------- */
+  function renderSet(){
+    var el=$('v-set');
+    var html='<div class="panel"><h2>Add students</h2><p class="sub" style="margin:0 0 10px">One student per line. To add a roll number, write it first: <b>SMIT-101, Ali Khan</b></p>'+
+      '<textarea id="names" placeholder="SMIT-101, Ali Khan&#10;SMIT-102, Sara Ahmed&#10;Bilal Hussain"></textarea>'+
+      '<div class="bar" style="margin:10px 0 0"><button class="btn primary" id="addNames">Add students</button></div></div>';
+    html+='<div class="panel"><h2>Add a test</h2><div class="form-row"><div><label for="tt">Test name</label><input type="text" id="tt" placeholder="Quiz 1" style="width:100%"></div>'+
+      '<div><label for="tm">Total marks</label><input type="number" id="tm" min="1" step="any" placeholder="50" style="width:100%"></div>'+
+      '<button class="btn primary" id="addTest">Add test</button></div></div>';
+    html+='<div class="panel"><h2>Tests ('+state.tests.length+')</h2>';
+    if(!state.tests.length)html+='<p class="sub" style="margin:0">No tests added yet.</p>';
+    state.tests.forEach(function(t){html+='<div class="item"><span>'+esc(t.title)+' <small>out of '+t.total+'</small></span><button class="btn danger" data-dt="'+t.id+'" aria-label="Remove '+esc(t.title)+'">Remove</button></div>';});
+    html+='</div>';
+    var list=state.students.slice().sort(function(a,b){return a.name.localeCompare(b.name);});
+    html+='<div class="panel"><h2>Students ('+list.length+')</h2>';
+    if(!list.length)html+='<p class="sub" style="margin:0">No students added yet.</p>';
+    list.forEach(function(s){html+='<div class="item"><span>'+esc(s.name)+(s.roll?' <small>'+esc(s.roll)+'</small>':'')+'</span><button class="btn danger" data-ds="'+s.id+'" aria-label="Remove '+esc(s.name)+'">Remove</button></div>';});
+    html+='</div>';
+    el.innerHTML=html;
+
+    $('addNames').onclick=function(){
+      var lines=$('names').value.split('\n').map(function(x){return x.trim();}).filter(Boolean);
+      if(!lines.length){toast('Type at least one name');return;}
+      var have={};state.students.forEach(function(s){have[s.name.toLowerCase()]=1;});
+      var added=0;
+      lines.forEach(function(l){
+        var roll='',name=l,i=l.indexOf(',');
+        if(i>0){roll=l.slice(0,i).trim();name=l.slice(i+1).trim();}
+        if(name&&!have[name.toLowerCase()]){state.students.push({id:uid(),name:name,roll:roll});have[name.toLowerCase()]=1;added++;}
+      });
+      save();renderSet();toast(added+' student'+(added===1?'':'s')+' added');
+    };
+    $('addTest').onclick=function(){
+      var title=$('tt').value.trim(),total=parseFloat($('tm').value);
+      if(!title){toast('Enter a test name');return;}
+      if(isNaN(total)||total<=0){toast('Enter total marks above 0');return;}
+      var t={id:uid(),title:title,total:total};state.tests.push(t);curTest=t.id;save();renderSet();toast('Test added');
+    };
+    el.querySelectorAll('[data-dt]').forEach(function(b){b.onclick=function(){
+      var id=b.getAttribute('data-dt');var t=state.tests.filter(function(x){return x.id===id;})[0];
+      if(t&&confirm('Remove "'+t.title+'" and all its marks?')){state.tests=state.tests.filter(function(x){return x.id!==id;});delete state.marks[id];save();renderSet();}
+    };});
+    el.querySelectorAll('[data-ds]').forEach(function(b){b.onclick=function(){
+      var id=b.getAttribute('data-ds');var s=state.students.filter(function(x){return x.id===id;})[0];
+      if(s&&confirm('Remove '+s.name+' and their marks?')){
+        state.students=state.students.filter(function(x){return x.id!==id;});
+        Object.keys(state.marks).forEach(function(t){delete state.marks[t][id];});save();renderSet();
+      }
+    };});
+  }
+
+  function setTab(t){
+    ['res','mrk','set'].forEach(function(k){
+      $('v-'+k).hidden=(k!==t);$('t-'+k).setAttribute('aria-selected',String(k===t));
+    });
+    if(t==='res')renderRes();else if(t==='mrk')renderMrk();else renderSet();
+  }
+  document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){setTab(b.getAttribute('data-tab'));};});
+
+  load();
+  setTab(state.students.length&&state.tests.length?'res':'set');
+})();
+</script>
+</body>
+</html>
